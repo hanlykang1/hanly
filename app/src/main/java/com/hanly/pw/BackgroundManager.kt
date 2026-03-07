@@ -2,20 +2,13 @@ package com.hanly.pw
 
 import android.content.Context
 import android.content.SharedPreferences
+import androidx.core.content.edit
 
-public class BackgroundManager(private val context: Context) {
-    private val sharedPreferences: SharedPreferences
-
-    init {
-        sharedPreferences = context.getSharedPreferences("background_prefs", Context.MODE_PRIVATE)
-    }
-
-    fun clearColorIndex() {
-        sharedPreferences.edit().remove(KEY_COLOR_INDEX).apply()
-    }
+class BackgroundManager(context: Context) {
+    private val sharedPreferences = context.getSharedPreferences("background_prefs", Context.MODE_PRIVATE)
 
     fun clearImageChanged() {
-        sharedPreferences.edit().putBoolean(KEY_IMAGE_CHANGED, false).apply()
+        sharedPreferences.edit { remove(KEY_IMAGE_CHANGED) }
     }
 
     val colorIndex: Int
@@ -29,7 +22,7 @@ public class BackgroundManager(private val context: Context) {
         get() = sharedPreferences.getBoolean(KEY_IMAGE_CHANGED, false)
 
     fun markImageChanged() {
-        sharedPreferences.edit().putBoolean(KEY_IMAGE_CHANGED, true).apply()
+        sharedPreferences.edit { putBoolean(KEY_IMAGE_CHANGED, true) }
     }
 
     fun registerChangeListener(listener: SharedPreferences.OnSharedPreferenceChangeListener) {
@@ -37,7 +30,7 @@ public class BackgroundManager(private val context: Context) {
     }
 
     fun saveColorIndex(index: Int) {
-        sharedPreferences.edit().putInt(KEY_COLOR_INDEX, index).apply()
+        sharedPreferences.edit { putInt(KEY_COLOR_INDEX, index) }
         android.util.Log.d("BackgroundManager", "Color index saved: $index")
     }
 
