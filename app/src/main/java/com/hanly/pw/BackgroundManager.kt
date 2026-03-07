@@ -19,7 +19,11 @@ public class BackgroundManager(private val context: Context) {
     }
 
     val colorIndex: Int
-        get() = sharedPreferences.getInt(KEY_COLOR_INDEX, 0)
+        get() {
+            val index = sharedPreferences.getInt(KEY_COLOR_INDEX, 0)
+            android.util.Log.d("BackgroundManager", "Color index retrieved: $index")
+            return index
+        }
 
     val isImageChanged: Boolean
         get() = sharedPreferences.getBoolean(KEY_IMAGE_CHANGED, false)
@@ -34,6 +38,7 @@ public class BackgroundManager(private val context: Context) {
 
     fun saveColorIndex(index: Int) {
         sharedPreferences.edit().putInt(KEY_COLOR_INDEX, index).apply()
+        android.util.Log.d("BackgroundManager", "Color index saved: $index")
     }
 
     fun unregisterChangeListener(listener: SharedPreferences.OnSharedPreferenceChangeListener) {
