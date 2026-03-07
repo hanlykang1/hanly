@@ -3,21 +3,18 @@ package com.hanly.pw
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.provider.MediaStore
 import android.view.ViewGroup
 import android.view.WindowManager
-import android.widget.Button
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isNotEmpty
 import androidx.activity.result.contract.ActivityResultContracts
-import com.hanly.pw.R
 import com.hanly.pw.ui.SettingsActivityLayout
 import java.io.File
 import java.io.FileOutputStream
 
-public class SettingsActivity : AppCompatActivity() {
+class SettingsActivity : AppCompatActivity() {
     private lateinit var backgroundManager: BackgroundManager
     private var colorIndex = 0
     private var isUsingImageBackground = false
@@ -68,11 +65,7 @@ public class SettingsActivity : AppCompatActivity() {
         if (isGranted) {
             openGallery()
         } else {
-            val permission = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
-                android.Manifest.permission.READ_MEDIA_IMAGES
-            } else {
-                android.Manifest.permission.READ_EXTERNAL_STORAGE
-            }
+            val permission = android.Manifest.permission.READ_MEDIA_IMAGES
             if (shouldShowRequestPermissionRationale(permission)) {
                 Toast.makeText(this, "需要访问相册权限才能选择图片", Toast.LENGTH_SHORT).show()
             } else {
@@ -153,7 +146,6 @@ public class SettingsActivity : AppCompatActivity() {
             if (file.exists()) {
                 val options = android.graphics.BitmapFactory.Options()
                 options.inPreferredConfig = android.graphics.Bitmap.Config.RGB_565
-                options.inDither = true
                 val bitmap = android.graphics.BitmapFactory.decodeFile(file.absolutePath, options)
                 if (bitmap != null) {
                     // Remove any existing image view first
@@ -229,11 +221,7 @@ public class SettingsActivity : AppCompatActivity() {
     }
 
     private fun checkAndRequestPermission() {
-        val permission = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
-            android.Manifest.permission.READ_MEDIA_IMAGES
-        } else {
-            android.Manifest.permission.READ_EXTERNAL_STORAGE
-        }
+        val permission = android.Manifest.permission.READ_MEDIA_IMAGES
         if (checkSelfPermission(permission) == android.content.pm.PackageManager.PERMISSION_GRANTED) {
             openGallery()
         } else if (shouldShowRequestPermissionRationale(permission)) {
