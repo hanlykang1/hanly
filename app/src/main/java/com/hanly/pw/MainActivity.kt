@@ -2,7 +2,6 @@ package com.hanly.pw
 
 import android.content.ClipData
 import android.content.ClipboardManager
-import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.net.Uri
@@ -15,6 +14,7 @@ import android.widget.SeekBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isNotEmpty
 import com.hanly.pw.ui.MainActivityLayout
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -23,7 +23,7 @@ import kotlinx.coroutines.withContext
 import java.io.File
 import java.util.Random
 
-public class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity() {
     private lateinit var backgroundManager: BackgroundManager
     private val backgroundChangeListener = SharedPreferences.OnSharedPreferenceChangeListener {
             _, key ->
@@ -151,7 +151,7 @@ public class MainActivity : AppCompatActivity() {
     
     private fun startEntranceAnimations() {
         // Animate title - find first TextView child
-        val titleTextView = mainLayout.getChildAt(0) as? android.widget.TextView ?: return
+        val titleTextView = mainLayout.getChildAt(0) as? TextView ?: return
         titleTextView.alpha = 0f
         titleTextView.translationY = -50f
         titleTextView.animate()
@@ -279,7 +279,6 @@ public class MainActivity : AppCompatActivity() {
                     
                     val options = android.graphics.BitmapFactory.Options()
                     options.inPreferredConfig = android.graphics.Bitmap.Config.RGB_565
-                    options.inDither = true
                     val bitmap = android.graphics.BitmapFactory.decodeFile(file.absolutePath, options)
                     
                     if (bitmap != null) {
@@ -324,7 +323,7 @@ public class MainActivity : AppCompatActivity() {
     private fun removeBackgroundImageView() {
         // Remove the image view if it exists
         val decorView = window.decorView as ViewGroup
-        if (decorView.childCount > 0) {
+        if (decorView.isNotEmpty()) {
             val firstChild = decorView.getChildAt(0)
             if (firstChild is ImageView) {
                 decorView.removeView(firstChild)
@@ -333,7 +332,7 @@ public class MainActivity : AppCompatActivity() {
     }
 
     // Character set constant - simplified
-    private val CHARACTER_SET = buildString {
+    private val characterSet = buildString {
         append(('A'..'Z').joinToString("")) // Uppercase letters
         append(('a'..'z').joinToString("")) // Lowercase letters
         append(('0'..'9').joinToString("")) // Numbers
@@ -342,14 +341,13 @@ public class MainActivity : AppCompatActivity() {
 
     private fun generateRandomString() {
         CoroutineScope(Dispatchers.IO).launch {
-            val maxLength = minOf(stringLength, CHARACTER_SET.length)
             val random = Random()
             val result = buildString {
                 val usedChars = mutableSetOf<Char>()
-                repeat(maxLength) {
+                repeat(stringLength) {
                     var char: Char
                     do {
-                        char = CHARACTER_SET[random.nextInt(CHARACTER_SET.length)]
+                        char = characterSet[random.nextInt(characterSet.length)]
                     } while (usedChars.contains(char))
                     usedChars.add(char)
                     append(char)
@@ -381,7 +379,7 @@ public class MainActivity : AppCompatActivity() {
     private fun copyToClipboard(text: String) {
         if (text == "点击生成按钮获取随机字符") return
 
-        val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        val clipboard = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
         val clip = ClipData.newPlainText("RandomString", text)
         clipboard.setPrimaryClip(clip)
         Toast.makeText(this, "已复制到剪贴板", Toast.LENGTH_SHORT).show()

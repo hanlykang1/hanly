@@ -10,6 +10,7 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isNotEmpty
 import androidx.activity.result.contract.ActivityResultContracts
 import com.hanly.pw.R
 import com.hanly.pw.ui.SettingsActivityLayout
@@ -192,7 +193,7 @@ public class SettingsActivity : AppCompatActivity() {
     private fun removeBackgroundImageView() {
         // Remove the image view if it exists
         val decorView = window.decorView as ViewGroup
-        if (decorView.childCount > 0) {
+        if (decorView.isNotEmpty()) {
             val firstChild = decorView.getChildAt(0)
             if (firstChild is ImageView) {
                 decorView.removeView(firstChild)
